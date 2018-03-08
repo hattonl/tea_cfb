@@ -164,7 +164,8 @@ void tea_cfb_decrypt(u8 *dst, u8 *src, u32 len)
     u32 packets, remainder, i;
     u8 padding[8] = {0};
     u8 local_iv[8] = {0};
-
+    u8 tmp_text[8] = {0};
+    
     if (len <= 0)
         return;
     
@@ -174,8 +175,9 @@ void tea_cfb_decrypt(u8 *dst, u8 *src, u32 len)
 
     for (i = 0; i < packets; i++ ) {
         tea_encrypt((u32 *)local_iv, (u32 *)password);
+        memcpy(temp_text, src + i*8, 8);
         xor_operate_8byte((u32*)(dst+i*8), (u32*)(src+i*8), (u32*)local_iv);
-        memcpy(local_iv, src+i*8, 8);
+        memcpy(local_iv, tmp_text, 8);
     }
 
     if (remainder)
